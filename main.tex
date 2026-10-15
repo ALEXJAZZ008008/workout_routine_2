@@ -12,6 +12,8 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \pagestyle{empty}
+
+% Universal workout-sheet palette and typography: minimum 10pt on A4.
 \definecolor{ink}{RGB}{31,34,37}
 \definecolor{muted}{RGB}{75,85,94}
 \definecolor{headfill}{RGB}{229,235,240}
@@ -20,119 +22,127 @@
 \definecolor{stripe}{RGB}{249,251,252}
 \definecolor{targets}{RGB}{57,66,74}
 \color{ink}
-% All visible text is at least 10pt; no scalebox or font shrinking.
-% Editing loads updates the automatic warm-up prescriptions.
-\newcommand{\LegPressAlex}{100}
-\newcommand{\LegPressKathi}{60}
-\newcommand{\CalfAlex}{60}
-\newcommand{\CalfKathi}{40}
-\newcommand{\PulldownAlex}{40}
-\newcommand{\PulldownKathi}{25}
+
+% Starting loads (kg per dumbbell; for paired dumbbells, kg per hand).
 \newcommand{\DeadliftAlex}{22.5}
 \newcommand{\DeadliftKathi}{15}
 \newcommand{\BenchAlex}{15}
 \newcommand{\BenchKathi}{10}
+\newcommand{\LegExtensionAlex}{12.5}
+\newcommand{\LegExtensionKathi}{10}
 \newcommand{\RowAlex}{15}
 \newcommand{\RowKathi}{10}
-\newcommand{\FlyAlex}{5}
-\newcommand{\FlyKathi}{2.5}
 \newcommand{\OverheadAlex}{10}
 \newcommand{\OverheadKathi}{7.5}
-\newcommand{\TricepsAlex}{10}
-\newcommand{\HipThrustKathi}{30}
-\newcommand{\CurlAlex}{7.5}
-\newcommand{\AbductionKathi}{20}
-\newcommand{\LegExtensionAlex}{25}
-\newcommand{\LegExtensionKathi}{15}
-\newcommand{\LegCurlAlex}{25}
-\newcommand{\LegCurlKathi}{15}
-\newcommand{\CableLateralAlex}{2.5}
-\newcommand{\CableLateralKathi}{2.5}
-\newcommand{\CableCrunchAlex}{25}
-\newcommand{\CableCrunchKathi}{15}
+\newcommand{\CalfAlex}{27.5}
+\newcommand{\CalfKathi}{17.5}
+\newcommand{\CurlAlex}{10}
+\newcommand{\LateralAlex}{5}
+\newcommand{\LateralKathi}{5}
+\newcommand{\HipThrustKathi}{22.5}
+\newcommand{\PulloverAlex}{12.5}
+\newcommand{\PulloverKathi}{7.5}
+\newcommand{\LegCurlAlex}{15}
+\newcommand{\LegCurlKathi}{10}
+\newcommand{\CrunchAlex}{10}
+\newcommand{\CrunchKathi}{7.5}
 \newcommand{\DumbbellStep}{2.5}
-\newcommand{\LegPressStep}{5}
 \newcommand{\Pair}[1]{2\,\texttimes\,#1\,kg}
 \newcommand{\Single}[1]{#1\,kg}
-\newcommand{\Load}[1]{#1\,kg}
-% Round each warm-up UP to an available increment, but below work weight.
+
+% Block A warm-ups: 6/4/2 at about 40/60/80% of work weight,
+% rounded UP to an available increment but always below the working load.
 \newcommand{\WarmN}[3]{\pgfmathsetmacro{\wnum}{max(0,min((#2)-(#3),ceil((#1)*(#2)/(#3)-0.005)*(#3)))}\pgfmathprintnumber[fixed,precision=1]{\wnum}}
 \newcommand{\WarmFull}[2]{6\,\texttimes\,\WarmN{0.4}{#1}{#2}\quad 4\,\texttimes\,\WarmN{0.6}{#1}{#2}\quad 2\,\texttimes\,\WarmN{0.8}{#1}{#2}\,kg}
-\newcommand{\WarmShort}[2]{4\,\texttimes\,\WarmN{0.6}{#1}{#2}\,kg}
-% Rep targets are independent for each working set and each person.
+
 \newcommand{\RepsFive}{5\,\,6\,\,7\,\,8}
 \newcommand{\RepsEight}{8\,\,9\,\,10\,\,11\,\,12}
 \newcommand{\RepsTwenty}{10\,11\,12\,13\,14\,15\,16\,17\,18\,19\,20}
-\newcolumntype{E}{>{\raggedright\arraybackslash}p{75.5mm}}
-\newcolumntype{H}{>{\centering\arraybackslash}p{11.5mm}}
-\newcolumntype{S}{>{\centering\arraybackslash}p{6.5mm}}
-\newcolumntype{A}{>{\raggedright\arraybackslash}p{48mm}}
-\newcolumntype{K}{>{\raggedright\arraybackslash}p{48mm}}
-% Subtle banding groups each exercise without extra ruled lines.
-\newcommand{\WRow}[2]{ & & \textbf{W} & \textcolor{muted}{#1} & \textcolor{muted}{#2}\\[-0.8mm] }
-% One slot: exercise, session pair, Alex load, Kathi load, Alex targets,
-% Kathi targets, optional warm-up, background.
-\newcommand{\Exercise}[8]{%
- \rowcolor{#8}#1 & \textbf{#2} & & \textbf{#3} & \textbf{#4}\\[0mm]
- \ifx\relax#7\relax\else\rowcolor{#8}#7\fi
- \rowcolor{#8} & & 1 & \textcolor{targets}{#5} & \textcolor{targets}{#6}\\[-0.7mm]
- \rowcolor{#8} & & 2 & \textcolor{targets}{#5} & \textcolor{targets}{#6}\\[0.12mm]
- \hline
+
+\newcolumntype{E}{>{\raggedright\arraybackslash}p{85mm}}
+\newcolumntype{S}{>{\centering\arraybackslash}p{7.5mm}}
+\newcolumntype{A}{>{\raggedright\arraybackslash}p{49mm}}
+\newcolumntype{K}{>{\raggedright\arraybackslash}p{49mm}}
+
+\newcommand{\Block}[2]{%
+  \rowcolor{headfill}\multicolumn{4}{@{}l@{}}{\rule{0pt}{4.95mm}\hspace{1.4mm}\bfseries BLOCK #1\enspace|\enspace #2 ROUNDS}\\[-0.2mm]\hline
 }
-% A paired slot is presented as an Alex row followed by a Kathi row,
-% placing each individual load alongside the correct exercise name.
-\newcommand{\PairedExercise}[8]{%
- \rowcolor{#8}#1 & \textbf{#3} & & \textbf{#4} & \\[0mm]
- \rowcolor{#8}#2 & & & & \textbf{#5}\\[0mm]
- \rowcolor{#8} & & 1 & \textcolor{targets}{#6} & \textcolor{targets}{#7}\\[-0.7mm]
- \rowcolor{#8} & & 2 & \textcolor{targets}{#6} & \textcolor{targets}{#7}\\[0.12mm]
- \hline
+% Three-round exercise: name, Alex load, Kathi load, rep targets,
+% warm-up for Alex, warm-up for Kathi, stripe colour.
+\newcommand{\ThreeRound}[7]{%
+  \rowcolor{#7}#1 & & \textbf{#2} & \textbf{#3}\\
+  \rowcolor{#7} & \textbf{W} & \textcolor{muted}{#5} & \textcolor{muted}{#6}\\[-0.7mm]
+  \rowcolor{#7} & 1 & \textcolor{targets}{#4} & \textcolor{targets}{#4}\\[-0.7mm]
+  \rowcolor{#7} & 2 & \textcolor{targets}{#4} & \textcolor{targets}{#4}\\[-0.7mm]
+  \rowcolor{#7} & 3 & \textcolor{targets}{#4} & \textcolor{targets}{#4}\\[0mm]\hline
 }
+% Two-round shared exercise: name, Alex load, Kathi load, targets, stripe colour.
+\newcommand{\TwoRound}[5]{%
+  \rowcolor{#5}#1 & & \textbf{#2} & \textbf{#3}\\
+  \rowcolor{#5} & 1 & \textcolor{targets}{#4} & \textcolor{targets}{#4}\\[-0.7mm]
+  \rowcolor{#5} & 2 & \textcolor{targets}{#4} & \textcolor{targets}{#4}\\[0mm]\hline
+}
+% Individual exercises preserve the other person's rest slot.
+\newcommand{\TwoRoundAlex}[4]{%
+  \rowcolor{#4}#1 & & \textbf{#2} & \\
+  \rowcolor{#4} & 1 & \textcolor{targets}{#3} & \\
+  \rowcolor{#4} & 2 & \textcolor{targets}{#3} & \\[0mm]\hline
+}
+\newcommand{\TwoRoundKathi}[4]{%
+  \rowcolor{#4}#1 & & & \textbf{#2}\\
+  \rowcolor{#4} & 1 & & \textcolor{targets}{#3}\\
+  \rowcolor{#4} & 2 & & \textcolor{targets}{#3}\\[0mm]\hline
+}
+
 \begin{document}
+\vspace*{1mm}
 \fontsize{10.3pt}{12pt}\selectfont
 \begin{minipage}[c]{0.76\linewidth}
-{\fontsize{20}{23}\selectfont\bfseries Full-body gym workout}\par
-{\color{muted}Alex \& Kathi \textbullet\ 28 working sets per full session \textbullet\ alternate shared equipment}
+{\fontsize{20}{23}\selectfont\bfseries Dumbbell workout}\par
+{\color{muted}Alex \& Kathi \textbullet\ 26 working sets each \textbullet\ three circuit blocks}
 \end{minipage}\hfill
-\begin{minipage}[c]{0.23\linewidth}\raggedleft\bfseries 2--3\texttimes\ per week\end{minipage}
+\begin{minipage}[c]{0.23\linewidth}\raggedleft\bfseries 3\texttimes\ per week\end{minipage}
 \vspace{1.2mm}
 {\color{muted}
-\textbf{W} = warm-up repetitions \texttimes\ kg. In slots 9 and 10, Alex and Kathi train simultaneously.\par
-\textbf{Loads:} Dumbbells kg/hand unless single; machines added plates (excluding sled) or stack; bilateral cable raises kg/stack. All machine and cable loads provisional.\par
-\textbf{Full:} all exercises, 2 sets, 2--3 days/week. \textbf{Hybrid:} assigned A/B/C, 3 sets, only when all three days are assured.\par
-\textbf{Compressed:} assigned A/B/C, 2 sets, all three days. Set 3 mirrors Set 2's target; keep listed order.}\par
+\textbf{Rounds:} Circuit each block, alternating partners on shared movements. On individual movements the other rests. No timed breaks; equipment changes give recovery.\par
+\textbf{Warm-up:} W once before each Block A movement: 6/4/2 reps at rounded $\sim$40/60/80\% of its working load.\par
+\textbf{Loads:} kg per dumbbell; ``2\,\texttimes'' means one dumbbell in each hand, otherwise one dumbbell.\par}
 \vspace{1.0mm}
+
 \arrayrulecolor{grid}
 \setlength{\arrayrulewidth}{0.37pt}
 \setlength{\tabcolsep}{0pt}
 \renewcommand{\arraystretch}{1.0}
-\noindent\begin{tabular}{@{}E@{\hspace{0.9mm}}H@{\hspace{0.9mm}}S@{\hspace{1.35mm}}A@{\hspace{0.8mm}\color{grid}\vrule width 0.45pt\hspace{0.8mm}}K@{}}
-\rowcolor{headfill}\rule{0pt}{5mm}\textbf{Exercise} & \textbf{A/B/C} & \textbf{Set} & \textbf{Alex: load / reps} & \textbf{Kathi: load / reps}\\\hline
-\Exercise{\textbf{1.} 45\textdegree\ leg press}{A, B}{\Load{\LegPressAlex}}{\Load{\LegPressKathi}}{\RepsEight}{\RepsEight}{\WRow{\WarmFull{\LegPressAlex}{\LegPressStep}}{\WarmFull{\LegPressKathi}{\LegPressStep}}}{white}
-\Exercise{\textbf{2.} Leg press calf raise (lengthened partials)}{A, B}{\Load{\CalfAlex}}{\Load{\CalfKathi}}{\RepsTwenty}{\RepsTwenty}{}{stripe}
-\Exercise{\textbf{3.} Lat pulldown}{B, C}{\Load{\PulldownAlex}}{\Load{\PulldownKathi}}{\RepsEight}{\RepsEight}{}{white}
-\Exercise{\textbf{4.} Neutral-grip dumbbell sumo deadlift}{A, C}{\Pair{\DeadliftAlex}}{\Pair{\DeadliftKathi}}{\RepsFive}{\RepsFive}{\WRow{\WarmFull{\DeadliftAlex}{\DumbbellStep}}{\WarmFull{\DeadliftKathi}{\DumbbellStep}}}{stripe}
-\Exercise{\textbf{5.} Semi-pronated dumbbell bench press}{A, C}{\Pair{\BenchAlex}}{\Pair{\BenchKathi}}{\RepsEight}{\RepsEight}{\WRow{\WarmFull{\BenchAlex}{\DumbbellStep}}{\WarmFull{\BenchKathi}{\DumbbellStep}}}{white}
-\Exercise{\textbf{6.} Semi-pronated chest-supported dumbbell row}{A, C}{\Pair{\RowAlex}}{\Pair{\RowKathi}}{\RepsEight}{\RepsEight}{\WRow{\WarmShort{\RowAlex}{\DumbbellStep}}{\WarmShort{\RowKathi}{\DumbbellStep}}}{stripe}
-\Exercise{\textbf{7.} Low-incline dumbbell fly}{B, C}{\Pair{\FlyAlex}}{\Pair{\FlyKathi}}{\RepsTwenty}{\RepsTwenty}{}{white}
-\Exercise{\textbf{8.} Seated semi-pronated dumbbell overhead press}{A, C}{\Pair{\OverheadAlex}}{\Pair{\OverheadKathi}}{\RepsEight}{\RepsEight}{\WRow{\WarmShort{\OverheadAlex}{\DumbbellStep}}{\WarmShort{\OverheadKathi}{\DumbbellStep}}}{stripe}
-\PairedExercise{\textbf{9A.} Lying two-handed dumbbell triceps extension (behind head)}{\textbf{9B.} Hip thrust machine}{A, B}{\Single{\TricepsAlex}}{\Load{\HipThrustKathi}}{\RepsEight}{\RepsEight}{white}
-\PairedExercise{\textbf{10A.} Incline supinating dumbbell curl}{\textbf{10B.} Hip abduction machine}{A, B}{\Pair{\CurlAlex}}{\Load{\AbductionKathi}}{\RepsEight}{\RepsTwenty}{stripe}
-\Exercise{\textbf{11.} Seated leg extension machine}{A, B}{\Load{\LegExtensionAlex}}{\Load{\LegExtensionKathi}}{\RepsEight}{\RepsEight}{}{white}
-\Exercise{\textbf{12.} Seated leg curl machine}{A, B}{\Load{\LegCurlAlex}}{\Load{\LegCurlKathi}}{\RepsEight}{\RepsEight}{}{stripe}
-\Exercise{\textbf{13.} Bilateral cable lateral raise}{B, C}{\Load{\CableLateralAlex}}{\Load{\CableLateralKathi}}{\RepsTwenty}{\RepsTwenty}{}{white}
-\Exercise{\textbf{14.} Kneeling rope cable crunch}{B, C}{\Load{\CableCrunchAlex}}{\Load{\CableCrunchKathi}}{\RepsEight}{\RepsEight}{}{stripe}
+\noindent\begin{tabular}{@{}E@{\hspace{0.95mm}}S@{\hspace{1.0mm}}A@{\hspace{0.8mm}\color{grid}\vrule width 0.45pt\hspace{0.8mm}}K@{}}
+\rowcolor{headfill}\rule{0pt}{5mm}\textbf{Exercise} & \textbf{Set} & \textbf{Alex: load / reps} & \textbf{Kathi: load / reps}\\\hline
+\Block{A}{3}
+\ThreeRound{\textbf{1.} Neutral-grip dumbbell sumo deadlift}{\Pair{\DeadliftAlex}}{\Pair{\DeadliftKathi}}{\RepsFive}{\WarmFull{\DeadliftAlex}{\DumbbellStep}}{\WarmFull{\DeadliftKathi}{\DumbbellStep}}{white}
+\ThreeRound{\textbf{2.} Semi-pronated dumbbell bench press}{\Pair{\BenchAlex}}{\Pair{\BenchKathi}}{\RepsEight}{\WarmFull{\BenchAlex}{\DumbbellStep}}{\WarmFull{\BenchKathi}{\DumbbellStep}}{stripe}
+\ThreeRound{\textbf{3.} Seated dumbbell leg extension}{\Single{\LegExtensionAlex}}{\Single{\LegExtensionKathi}}{\RepsEight}{\WarmFull{\LegExtensionAlex}{\DumbbellStep}}{\WarmFull{\LegExtensionKathi}{\DumbbellStep}}{white}
+\ThreeRound{\textbf{4.} Semi-pronated chest-supported dumbbell row}{\Pair{\RowAlex}}{\Pair{\RowKathi}}{\RepsEight}{\WarmFull{\RowAlex}{\DumbbellStep}}{\WarmFull{\RowKathi}{\DumbbellStep}}{stripe}
+\Block{B}{2}
+\TwoRound{\textbf{5.} Seated semi-pronated dumbbell overhead press}{\Pair{\OverheadAlex}}{\Pair{\OverheadKathi}}{\RepsEight}{white}
+\TwoRound{\textbf{6.} Standing dumbbell calf raise (lengthened partials, on step)}{\Single{\CalfAlex}}{\Single{\CalfKathi}}{\RepsEight}{stripe}
+\TwoRoundAlex{\textbf{7.} Incline supinating dumbbell curl (Alex only)}{\Pair{\CurlAlex}}{\RepsEight}{white}
+\TwoRound{\textbf{8.} Seated scapular-plane dumbbell lateral raise}{\Pair{\LateralAlex}}{\Pair{\LateralKathi}}{\RepsTwenty}{stripe}
+\Block{C}{2}
+\TwoRoundKathi{\textbf{9.} Dumbbell hip thrust (Kathi only)}{\Single{\HipThrustKathi}}{\RepsEight}{white}
+\TwoRound{\textbf{10.} Straight-arm dumbbell pullover}{\Single{\PulloverAlex}}{\Single{\PulloverKathi}}{\RepsEight}{stripe}
+\TwoRound{\textbf{11.} Dumbbell leg curl}{\Single{\LegCurlAlex}}{\Single{\LegCurlKathi}}{\RepsEight}{white}
+\TwoRound{\textbf{12.} Dumbbell crunch}{\Single{\CrunchAlex}}{\Single{\CrunchKathi}}{\RepsEight}{stripe}
 \end{tabular}
 \vspace{1.2mm}
+
 \begin{tcolorbox}[colback=panelbg,colframe=grid,boxrule=0.5pt,arc=1.5mm,left=2mm,right=2mm,top=1mm,bottom=1mm,boxsep=0pt,before skip=0pt,after skip=0pt]
 \textbf{PROGRESSION \& RECOVERY}\par\vspace{0.6mm}
 \begin{minipage}[t]{0.485\linewidth}\raggedright
-\textbf{Reps:} Add one total repetition to Sets 1--2 per successful session (8/8, 9/8, 9/9). In 3-set mode, Set 3 copies Set 2. Repeat missed targets.\par
-\textbf{Weight:} Increase only when all prescribed sets reach the range maximum; restart at its minimum. If too heavy, record actual reps and rebuild.\par
+\textbf{Reps:} Add one total rep per successful session, regardless of range (3 sets: 8/8/8, 9/8/8, 9/9/8; 2 sets: 10/10, 11/10, 11/11). Repeat missed targets.\par
+\textbf{Weight:} Increase only when every set reaches the range maximum; restart at its minimum. If too heavy, record actual reps and rebuild.\par
 \textbf{Effort:} Aim for about 1 RIR; final set may reach 0--1 RIR. Prioritise technique.
 \end{minipage}\hfill\begin{minipage}[t]{0.485\linewidth}\raggedright
-\textbf{Rest:} Alternate sets; rest while your partner works. Equipment changes add recovery. Pause if required for safe technique.\par
-\textbf{Plateaus:} Off days and isolated stalls are normal. Better technique, control, or range of motion (including fuller partials) counts as progress. If half or more of the movements stall or regress across three consecutive sessions, skip the next planned session for recovery, then resume.
+\textbf{Rest:} Rest only while your partner works. Do not add breaks to reach a target; pause if required for safety.\par
+\textbf{Progress:} Better technique, control or range (including fuller partials) counts. Off days and isolated stalls are normal.\par
+\textbf{Recovery:} If at least half of movements stall or regress for three consecutive sessions, skip the next session, then resume.
 \end{minipage}
 \end{tcolorbox}
 \end{document}
