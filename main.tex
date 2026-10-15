@@ -1,424 +1,158 @@
-\documentclass[11pt,a4paper]{article}
+\RequirePackage{fix-cm}
+\documentclass[10pt,a4paper]{article}
 
-% Base structure follows the supplied main.tex.  The tracker-specific visual
-% system is deliberately closer to the gold-standard PDF: clean sans serif,
-% restrained blue-grey rules, strong headings, and generous writing space.
-\usepackage{fix-cm} % scalable Computer Modern math sizes; avoids substitutions at custom text sizes
+% Adapted from the supplied main.tex: same restrained typography and palette,
+% but redesigned as a single-sheet workout rather than a multi-session tracker.
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[a4paper,margin=20mm]{geometry}
-\IfFileExists{sourcesans.sty}{%
-  \usepackage[default]{sourcesans}%
-}{%
-  \usepackage[default]{sourcesanspro}% fallback for older TeX Live installations
-}
+\usepackage{lmodern}
+\usepackage[a4paper,top=0.55cm,bottom=0.55cm,left=0.75cm,right=0.75cm]{geometry}
+\IfFileExists{sourcesans.sty}{\usepackage[default]{sourcesans}}{\usepackage[default]{sourcesanspro}}
 \usepackage[table]{xcolor}
-\usepackage{tabularx}
-\usepackage{array}
-\usepackage{multirow}
-\usepackage{calc}
-\usepackage{tikz}
+\usepackage{tabularx,array,booktabs,multirow}
 \usepackage[most]{tcolorbox}
-\usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1020,stretch=10,shrink=10]{microtype}
-\microtypecontext{spacing=nonfrench}
-\tolerance=1600
-\hbadness=1600
-\emergencystretch=1.2em
+\usepackage{microtype}
+\usepackage{tikz}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \pagestyle{empty}
 
-% Gold-standard-inspired palette.
 \definecolor{ink}{RGB}{31,34,37}
-\definecolor{muted}{RGB}{103,115,126}
+\definecolor{muted}{RGB}{75,85,94}
 \definecolor{headfill}{RGB}{229,235,240}
-\definecolor{blockfill}{RGB}{243,245,247}
 \definecolor{grid}{RGB}{188,199,208}
-\definecolor{blockrule}{RGB}{119,139,153}
 \definecolor{panelbg}{RGB}{247,249,250}
+\definecolor{accent}{RGB}{119,139,153}
 \color{ink}
-
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
-\newcolumntype{L}[1]{>{\raggedright\arraybackslash}m{#1}}
-\newcommand{\mutedtext}[1]{{\color{muted}#1}}
+\newcolumntype{S}{>{\centering\arraybackslash}p{6.5mm}}
+
+
+% Full-body dumbbell circuit: compact, self-contained single-page workout.
+\newcommand{\FiveTargets}{5\hspace{2.9mm}6\hspace{2.9mm}7\hspace{2.9mm}8}
+\newcommand{\EightTargets}{8\hspace{2.6mm}9\hspace{2.6mm}10\hspace{2.6mm}11\hspace{2.6mm}12}
+\newcommand{\TwentyTargets}{10\hspace{0.67mm}11\hspace{0.67mm}12\hspace{0.67mm}13\hspace{0.67mm}14\hspace{0.67mm}15\hspace{0.67mm}16\hspace{0.67mm}17\hspace{0.67mm}18\hspace{0.67mm}19\hspace{0.67mm}20}
+\newcommand{\Targets}[1]{{\fontsize{8.7}{10.4}\selectfont\color{muted}\mbox{#1}}}
+\newcommand{\SetOne}[2]{%
+  {\fontsize{9.4}{11}\selectfont\textbf{#1}}\par\vspace{0.12mm}%
+  \Targets{#2}}
+\newcommand{\SetOneLabel}{%
+  {\fontsize{9.4}{11}\selectfont\phantom{1}}\par\vspace{0.12mm}%
+  {\fontsize{9}{10.5}\selectfont\raisebox{-1pt}{\textbf{1}}}}
+\newcommand{\SetTwo}[1]{\rule{0pt}{3.25mm}\Targets{#1}}
+\newcommand{\NoExercise}{{\color{muted}---}}
+\newcommand{\ExerciseLabel}[1]{{\fontsize{8.85}{10.6}\selectfont\mbox{#1}}}
+
+% The workout page follows Version 3's exercise/weight/repetition layout.
+% The exercises, rounds, loads and rules remain exactly those of Version 2.
+\newcolumntype{V}{>{\raggedright\arraybackslash}p{77mm}}
+\newcommand{\WGiven}[3]{{\fontsize{8.0}{9.7}\selectfont\color{muted}\mbox{6\,\texttimes\,#1\hspace{1.4mm}4\,\texttimes\,#2\hspace{1.4mm}2\,\texttimes\,#3\,kg}}}
+\newcommand{\LoadPair}[1]{2\,\texttimes\,#1\,kg}
+\newcommand{\LoadSingle}[1]{#1\,kg}
+\newcommand{\RoundBlock}[2]{%
+\rowcolor{headfill}\multicolumn{4}{@{}l@{}}{\cellcolor{headfill}\rule{0pt}{5.3mm}\hspace{2.3mm}{\fontsize{9}{10.4}\selectfont\bfseries BLOCK #1 \enspace|\enspace #2 ROUNDS}}\\
+\hline
+}
+% Three-set Block A exercise: name, Alex load, Kathi load, rep targets,
+% Alex warm-up, Kathi warm-up. W is always BEFORE working Set 1.
+\newcommand{\ThreeRoundExercise}[6]{%
+  \multirow{4}{77mm}{\ExerciseLabel{#1}} & {\color{muted}\bfseries W} & #5 & #6 \\
+  \cline{2-4}
+  & \SetOneLabel & \SetOne{#2}{#4} & \SetOne{#3}{#4} \\
+  \cline{2-4}
+  & \textbf{2} & \SetTwo{#4} & \SetTwo{#4} \\
+  \cline{2-4}
+  & \textbf{3} & \SetTwo{#4} & \SetTwo{#4} \\
+  \hline
+}
+% Block B/C exercise: same visual treatment as Version 3.
+\newcommand{\TwoRoundExercise}[4]{%
+  \multirow{2}{77mm}{\ExerciseLabel{#1}} & \SetOneLabel & \SetOne{#2}{#4} & \SetOne{#3}{#4} \\
+  \cline{2-4}
+  & \textbf{2} & \SetTwo{#4} & \SetTwo{#4} \\
+  \hline
+}
+\newcommand{\TwoRoundAlex}[3]{%
+  \multirow{2}{77mm}{\ExerciseLabel{#1}} & \SetOneLabel & \SetOne{#2}{#3} & \multirow{2}{*}{\NoExercise} \\
+  \cline{2-3}
+  & \textbf{2} & \SetTwo{#3} & \\
+  \hline
+}
+\newcommand{\TwoRoundKathi}[3]{%
+  \multirow{2}{77mm}{\ExerciseLabel{#1}} & \SetOneLabel & \multirow{2}{*}{\NoExercise} & \SetOne{#2}{#3} \\
+  \cline{2-2}\cline{4-4}
+  & \textbf{2} & & \SetTwo{#3} \\
+  \hline
+}
+
 
 \begin{document}
-
-%=========================================================
-% PAGE 1
-\begin{center}
-{\fontsize{26}{31}\selectfont\bfseries Dumbbell Workout}
-\end{center}
-
-\vspace{0.50cm}
-
-\noindent
-\begin{minipage}[t]{0.68\linewidth}
-{\fontsize{14}{17}\selectfont\bfseries WORKOUT}
+\begin{minipage}[c]{0.69\linewidth}
+  {\fontsize{23}{26}\selectfont\bfseries Dumbbell workout}\par\vspace{1mm}
+  {\fontsize{8.8}{10.8}\selectfont\color{muted}Alex \& Kathi\quad\textbullet\quad 26 working sets each\quad\textbullet\quad three circuit blocks}
 \end{minipage}%
-\begin{minipage}[t]{0.32\linewidth}
-\raggedleft
-\tikz[baseline=(freq.base)]{%
-  \node[draw=grid, line width=0.7pt, rounded corners=4.5mm,
-        inner xsep=9mm, inner ysep=2.5mm,
-        text=muted, font=\bfseries\fontsize{9.5}{11}\selectfont] (freq) {3x per week};}
+\begin{minipage}[c]{0.31\linewidth}\raggedleft
+  \tikz[baseline=(freq.base)]{\node[draw=grid,line width=0.7pt,
+    rounded corners=4mm,inner xsep=7mm,inner ysep=2.5mm,
+    text=muted,font=\bfseries\fontsize{9}{11}\selectfont] (freq) {3\texttimes\ per week};}
 \end{minipage}
 
-\vspace{0.12cm}
-{\fontsize{8.0}{9.6}\selectfont\color{muted}
-Rounds: work continuously with no scheduled rest. Shared exercises alternate partners; on a solo exercise, the other rests and starts the next shared exercise. Move on as soon as the set and necessary setup are complete.\\[0.10cm]
-Warm-up (Block A only, before first work set of each exercise): perform 6/4/2 reps at $\sim$40/60/80\% of work load; round up; if this would equal or exceed the working load, use the heaviest available dumbbell below it.
+\vspace{0.9mm}
+{\fontsize{8.3}{10.4}\selectfont\color{muted}
+\textbf{Rounds:} Complete each block as a circuit, alternating partners on shared movements. No scheduled rest; equipment changes provide additional recovery. During individual movements, the other partner rests.\par
+\textbf{Warm-up:} W is done once, before the first working set of each Block A exercise (6/4/2 reps at rounded $\sim$40/60/80\% loads); exact loads are printed below.\par
+\textbf{Loads:} kg per dumbbell; 2\,\texttimes\, means one in each hand, otherwise one dumbbell.\par
 }
-
-\vspace{0.24cm}
-\arrayrulecolor{grid}
-\setlength{\arrayrulewidth}{0.42pt}
-\renewcommand{\arraystretch}{1.60}
-\setlength{\tabcolsep}{7pt}
-{\fontsize{8.8}{10.2}\selectfont
-\begin{tabularx}{\linewidth}{@{}Y C{1.75cm}@{}}
-\rowcolor{headfill}\textbf{Exercise} & \textbf{Reps} \\
-\rowcolor{blockfill}\multicolumn{2}{@{}l@{}}{\hspace{7pt}\textbf{\color{muted}BLOCK A \;|\; 3 ROUNDS}} \\
-Neutral-grip dumbbell sumo deadlift & 5--8 \\
-\hline
-Semi-pronated dumbbell bench press & 8--12 \\
-\hline
-Seated dumbbell leg extension & 8--12 \\
-\hline
-Semi-pronated chest-supported dumbbell row & 8--12 \\
-\rowcolor{blockfill}\multicolumn{2}{@{}l@{}}{\hspace{7pt}\textbf{\color{muted}BLOCK B \;|\; 2 ROUNDS}} \\
-Seated semi-pronated dumbbell overhead press & 8--12 \\
-\hline
-Standing dumbbell calf raise (lengthened partials, on step) & 8--12 \\
-\hline
-Incline supinating dumbbell curl (Alex only) & 8--12 \\
-\hline
-Seated scapular-plane dumbbell lateral raise & 10--20 \\
-\rowcolor{blockfill}\multicolumn{2}{@{}l@{}}{\hspace{7pt}\textbf{\color{muted}BLOCK C \;|\; 2 ROUNDS}} \\
-Dumbbell hip thrust (Kathi only) & 8--12 \\
-\hline
-Straight-arm dumbbell pullover & 8--12 \\
-\hline
-Dumbbell leg curl & 8--12 \\
-\hline
-Dumbbell crunch & 8--12 \\
-\end{tabularx}\par
-}
-
-\vspace{0.24cm}
-\noindent
-\begin{minipage}[t]{0.72\linewidth}
-{\fontsize{14}{17}\selectfont\bfseries STARTING LOAD AND REPS}
-\end{minipage}%
-\begin{minipage}[t]{0.28\linewidth}
-\raggedleft{\fontsize{8.0}{9.5}\selectfont\color{muted}kg = per dumbbell}
-\end{minipage}
-
-\vspace{0.12cm}
-{\fontsize{7.75}{9.25}\selectfont
-\renewcommand{\arraystretch}{1.60}
-\setlength{\tabcolsep}{4.7pt}
-\begin{tabularx}{\linewidth}{@{}Y C{1.35cm} C{1.35cm}!{\color{blockrule}\vrule width 0.65pt}C{1.35cm} C{1.35cm}@{}}
-\rowcolor{headfill}\textbf{Exercise} & \textbf{Alex kg} & \textbf{Alex reps} & \textbf{Kathi kg} & \textbf{Kathi reps} \\
-Neutral-grip dumbbell sumo deadlift & 2x 22.5 & 5/5/5 & 2x 15.0 & 5/5/5 \\
-\hline
-Semi-pronated dumbbell bench press & 2x 15.0 & 8/8/8 & 2x 10.0 & 8/8/8 \\
-\hline
-Seated dumbbell leg extension & 1x 12.5 & 8/8/8 & 1x 10.0 & 8/8/8 \\
-\hline
-Semi-pronated chest-supported dumbbell row & 2x 15.0 & 8/8/8 & 2x 10.0 & 8/8/8 \\
-\hline
-Seated semi-pronated dumbbell overhead press & 2x 10.0 & 8/8 & 2x 7.5 & 8/8 \\
-\hline
-Standing dumbbell calf raise (lengthened partials, on step) & 1x 27.5 & 8/8 & 1x 17.5 & 8/8 \\
-\hline
-Incline supinating dumbbell curl & 2x 10.0 & 8/8 & - & - \\
-\hline
-Seated scapular-plane dumbbell lateral raise & 2x 5.0 & 10/10 & 2x 5.0 & 10/10 \\
-\hline
-Dumbbell hip thrust & - & - & 1x 22.5 & 8/8 \\
-\hline
-Straight-arm dumbbell pullover & 1x 12.5 & 8/8 & 1x 7.5 & 8/8 \\
-\hline
-Dumbbell leg curl & 1x 15.0 & 8/8 & 1x 10.0 & 8/8 \\
-\hline
-Dumbbell crunch & 1x 10.0 & 8/8 & 1x 7.5 & 8/8 \\
-\end{tabularx}\par
-}
-
-\vspace{0.07cm}
-{\fontsize{7.3}{8.7}\selectfont\color{muted}
-For subsequent trackers, starting values carry forward from the final actual load and reps of the previous 12-session tracker.
-}
-
-\vspace{0.16cm}
-\begin{tcolorbox}[
-  enhanced,
-  colback=panelbg,
-  colframe=grid,
-  boxrule=0.65pt,
-  arc=3.0mm,
-  left=3.0mm,right=3.0mm,top=1.2mm,bottom=1.2mm,
-  boxsep=0mm,
-  before skip=0pt,after skip=0pt
-]
-{\fontsize{9.7}{10.7}\selectfont\bfseries PROGRESSION}\par\vspace{0.08cm}
-{\fontsize{6.45}{6.95}\selectfont
-3 sets (+1 total): 8/8/8 $\to$ 9/8/8 $\to$ 9/9/8 $\to$ 9/9/9.\quad
-2 sets (+1 total): 8/8 $\to$ 9/8 $\to$ 9/9.\\[-5.5pt]
-10--20 (+2 total): 10/10 $\to$ 11/11 $\to$ 12/12. Continue the same pattern to the top of each range.\\[-5.5pt]
-Effort: $\sim$1 RIR on working sets; final set may reach 0--1 RIR. Last rep hard but technically clean.\\[-5.5pt]
-At ceiling: increase to the next load and plan the range minimum. Actual reps may initially fall below the range.\\[-5.5pt]
-If the planned target is missed, record actual and repeat the same target until achieved; then resume normal progression.\\[-5.5pt]
-A target missed at the programmed pace counts as a miss; do not add rest solely to achieve it.\\[-5.5pt]
-Individual stalls are tolerated while other exercises progress; do not reset or alter that exercise automatically.\\[-5.5pt]
-Recovery: if $\geq$50\% of exercises miss planned progression or regress for 3 consecutive sessions, skip the next scheduled session.
-}
-\end{tcolorbox}
-
-\enlargethispage{12mm}
-% Footer kept with Page 1. A fixed gap is used rather than \vfill so the
-% stretchable glue cannot consume the remaining page height and strand the
-% footer text on a separate page under different font metrics/TeX versions.
-\vspace{0.18cm}
-\noindent\begin{minipage}{\linewidth}
-{\color{grid}\hrule height 0.45pt}
-\vspace{0.18cm}
-{\fontsize{6.05}{7.2}\selectfont\color{muted}
-Design: full-body strength/hypertrophy, dumbbells + bench only; stable, repeatable movements, objective progression, minimal balance/bodyweight demand, $\sim$60-min two-person sessions.
-}
-\end{minipage}
-
-%=========================================================
-% PAGES 2-3: TRAINING LOGS
-% Native landscape A4: page box is 297 x 210 mm with /Rotate 0.
-\clearpage
-\setlength{\paperwidth}{297mm}
-\setlength{\paperheight}{210mm}
-\pdfpagewidth=\paperwidth
-\pdfpageheight=\paperheight
-\newgeometry{left=8mm,right=8mm,top=8mm,bottom=8mm}
-% geometry does not recompute these reliably after the manual per-page paper-size switch.
-% Set them explicitly so the native-landscape tables are also correct to TeX, not only visually.
-\setlength{\textwidth}{281mm}
-\setlength{\linewidth}{281mm}
-\setlength{\columnwidth}{281mm}
-\hsize=281mm
-\setlength{\tabcolsep}{0pt}
-\renewcommand{\arraystretch}{1}
+\vspace{0.8mm}
 \arrayrulecolor{grid}
 \setlength{\arrayrulewidth}{0.45pt}
+\setlength{\tabcolsep}{2.3pt}
+\renewcommand{\arraystretch}{1.00}
 
-% Each session is 16.6 mm wide: 7.0 mm kg + 3x3.2 mm repetition cells.
-\newcommand{\SessionHead}[1]{\multicolumn{4}{c|}{\cellcolor{headfill}\rule{0pt}{4.35mm}\textbf{\fontsize{7.7}{8.4}\selectfont S#1}}}
-\newcommand{\SessionSubHead}{\cellcolor{headfill}\rule{0pt}{4.35mm}\textbf{\fontsize{5.8}{6.3}\selectfont kg} & \multicolumn{3}{c|}{\cellcolor{headfill}\rule{0pt}{4.35mm}\textbf{\fontsize{5.8}{6.3}\selectfont plan}}}
-\newcommand{\SessionActualHead}{\cellcolor{headfill}\rule{0pt}{4.35mm} & \multicolumn{3}{c|}{\cellcolor{headfill}\rule{0pt}{4.35mm}\textbf{\fontsize{5.8}{6.3}\selectfont actual}}}
-
-\newcommand{\LogRow}[2]{%
-\multirow{2}{77mm}{\hspace{2mm}\raggedright\arraybackslash #1} & \rule{0pt}{5.40mm}\multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & \\
-\cline{3-5}\cline{7-9}\cline{11-13}\cline{15-17}\cline{19-21}\cline{23-25}\cline{27-29}\cline{31-33}\cline{35-37}\cline{39-41}\cline{43-45}\cline{47-49}
-& & \rule{0pt}{5.40mm} & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & \\
+{\fontsize{8.5}{10.1}\selectfont
+\noindent\begin{tabularx}{\linewidth}{@{}V S Y !{\hspace{1.15mm}\color{grid}\vrule width 0.65pt\hspace{1.15mm}} Y@{}}
+\rowcolor{headfill}
+\rule{0pt}{4.7mm}\textbf{Exercise} & \textbf{Set} & \textbf{Alex: weight / reps} & \textbf{Kathi: weight / reps} \\
 \hline
-}
-\newcommand{\LogRowNoBottom}[2]{%
-\multirow{2}{77mm}{\hspace{2mm}\raggedright\arraybackslash #1} & \rule{0pt}{5.40mm}\multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & & \multirow{2}{*}{#2} & & & \\
-\cline{3-5}\cline{7-9}\cline{11-13}\cline{15-17}\cline{19-21}\cline{23-25}\cline{27-29}\cline{31-33}\cline{35-37}\cline{39-41}\cline{43-45}\cline{47-49}
-& & \rule{0pt}{5.40mm} & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & & \\
-}
-
-% Two-set rows use the same total rep-entry width as three-set rows, but with
-% a single central divider.  The surrounding multicolumn suppresses the two
-% internal thirds from the base three-column grid, so Block B/C genuinely show
-% two writable rep cells rather than three.
-\newcommand{\TwoRepCells}{%
-\multicolumn{3}{c|}{%
-\begin{tikzpicture}[baseline=(current bounding box.center)]
-  \path[use as bounding box] (0,0) rectangle (9.3mm,5.40mm);
-  \draw[color=grid,line width=0.45pt] (4.65mm,0) -- (4.65mm,5.40mm);
-\end{tikzpicture}%
-}%
+\RoundBlock{A}{3}
+\ThreeRoundExercise{\textbf{1.} Neutral-grip dumbbell sumo deadlift}{\LoadPair{22.5}}{\LoadPair{15}}{\FiveTargets}{\WGiven{10}{15}{20}}{\WGiven{7.5}{10}{12.5}}
+\ThreeRoundExercise{\textbf{2.} Semi-pronated dumbbell bench press}{\LoadPair{15}}{\LoadPair{10}}{\EightTargets}{\WGiven{7.5}{10}{12.5}}{\WGiven{5}{7.5}{7.5}}
+\ThreeRoundExercise{\textbf{3.} Seated dumbbell leg extension}{\LoadSingle{12.5}}{\LoadSingle{10}}{\EightTargets}{\WGiven{5}{7.5}{10}}{\WGiven{5}{7.5}{7.5}}
+\ThreeRoundExercise{\textbf{4.} Semi-pronated chest-supported dumbbell row}{\LoadPair{15}}{\LoadPair{10}}{\EightTargets}{\WGiven{7.5}{10}{12.5}}{\WGiven{5}{7.5}{7.5}}
+\RoundBlock{B}{2}
+\TwoRoundExercise{\textbf{5.} Seated semi-pronated dumbbell overhead press}{\LoadPair{10}}{\LoadPair{7.5}}{\EightTargets}
+\TwoRoundExercise{\shortstack[l]{\textbf{6.} Standing dumbbell calf raise\\[-0.5mm]\textcolor{muted}{(lengthened partials, on step)}}}{\LoadSingle{27.5}}{\LoadSingle{17.5}}{\EightTargets}
+\TwoRoundAlex{\textbf{7.} Incline supinating dumbbell curl \textcolor{muted}{(Alex only)}}{\LoadPair{10}}{\EightTargets}
+\TwoRoundExercise{\textbf{8.} Seated scapular-plane dumbbell lateral raise}{\LoadPair{5}}{\LoadPair{5}}{\TwentyTargets}
+\RoundBlock{C}{2}
+\TwoRoundKathi{\textbf{9.} Dumbbell hip thrust \textcolor{muted}{(Kathi only)}}{\LoadSingle{22.5}}{\EightTargets}
+\TwoRoundExercise{\textbf{10.} Straight-arm dumbbell pullover}{\LoadSingle{12.5}}{\LoadSingle{7.5}}{\EightTargets}
+\TwoRoundExercise{\textbf{11.} Dumbbell leg curl}{\LoadSingle{15}}{\LoadSingle{10}}{\EightTargets}
+\TwoRoundExercise{\textbf{12.} Dumbbell crunch}{\LoadSingle{10}}{\LoadSingle{7.5}}{\EightTargets}
+\end{tabularx}\par
 }
 
-\newcommand{\LogRowTwo}[2]{%
-\multirow{2}{77mm}{\hspace{2mm}\raggedright\arraybackslash #1}
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells \\
-\cline{3-5}\cline{7-9}\cline{11-13}\cline{15-17}\cline{19-21}\cline{23-25}\cline{27-29}\cline{31-33}\cline{35-37}\cline{39-41}\cline{43-45}\cline{47-49}
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells \\
-\hline
+\vspace{0.75mm}
+\begin{tcolorbox}[
+  enhanced,colback=panelbg,colframe=grid,boxrule=0.6pt,arc=2.5mm,
+  left=3mm,right=3mm,top=1.2mm,bottom=1.2mm,boxsep=0mm,
+  before skip=0pt,after skip=0pt]
+{\fontsize{9.6}{11.2}\selectfont\bfseries PROGRESSION \& RECOVERY}\par\vspace{0.65mm}
+\begin{minipage}[t]{0.48\linewidth}
+{\fontsize{8.10}{9.8}\selectfont
+\textbf{Reps:} Add one total rep per successful session, regardless of range: 3 sets 8/8/8 $\to$ 9/8/8 $\to$ 9/9/8; 2 sets 10/10 $\to$ 11/10 $\to$ 11/11.\par\vspace{0.45mm}
+\textbf{Weight:} Increase to the next load only when every set reaches the range ceiling, then restart at the minimum. If the new load is too heavy, log actual reps and build back into range.\par\vspace{0.45mm}
+\textbf{Effort:} Around 1 RIR; final set may reach 0--1 RIR. Technique and safe execution take priority.
 }
-\newcommand{\LogRowTwoNoBottom}[2]{%
-\multirow{2}{77mm}{\hspace{2mm}\raggedright\arraybackslash #1}
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells
-& \multirow{2}{*}{#2} & \TwoRepCells \\
-\cline{3-5}\cline{7-9}\cline{11-13}\cline{15-17}\cline{19-21}\cline{23-25}\cline{27-29}\cline{31-33}\cline{35-37}\cline{39-41}\cline{43-45}\cline{47-49}
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells
-& & \TwoRepCells \\
-}
-\newcommand{\BlockSeparator}{\noalign{\color{blockrule}\hrule height 0.75pt\color{ink}}}
-
-\newcommand{\LogTableHeader}{%
-\cellcolor{headfill}\rule{0pt}{4.35mm} &
-\SessionHead{1} & \SessionHead{2} & \SessionHead{3} & \SessionHead{4} & \SessionHead{5} & \SessionHead{6} & \SessionHead{7} & \SessionHead{8} & \SessionHead{9} & \SessionHead{10} & \SessionHead{11} & \SessionHead{12} \\
-\cline{2-49}
-\cellcolor{headfill}\rule{0pt}{4.35mm} & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead & \SessionSubHead \\
-\cline{3-5}\cline{7-9}\cline{11-13}\cline{15-17}\cline{19-21}\cline{23-25}\cline{27-29}\cline{31-33}\cline{35-37}\cline{39-41}\cline{43-45}\cline{47-49}
-\cellcolor{headfill}\rule{0pt}{4.35mm}\hspace{2mm}\textbf{\fontsize{7.6}{8.4}\selectfont Exercise} & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead & \SessionActualHead \\
-\hline
-}
-
-\newcommand{\AlexLog}{%
-{\fontsize{6.9}{7.8}\selectfont
-{\fontsize{20}{24}\selectfont\bfseries Training Log - Alex}\par
-\vspace{1.35cm}
-\noindent\begin{tabular}{|L{77mm}|*{12}{C{6.9mm}|C{3.1mm}|C{3.1mm}|C{3.1mm}|}}
-\hline
-\LogTableHeader
-\LogRow{Neutral-grip dumbbell sumo deadlift}{2x}
-\LogRow{Semi-pronated dumbbell bench press}{2x}
-\LogRow{Seated dumbbell leg extension}{1x}
-\LogRowNoBottom{Semi-pronated chest-supported dumbbell row}{2x}
-\BlockSeparator
-\LogRowTwo{Seated semi-pronated dumbbell overhead press}{2x}
-\LogRowTwo{Standing dumbbell calf raise (lengthened partials, on step)}{1x}
-\LogRowTwo{Incline supinating dumbbell curl}{2x}
-\LogRowTwoNoBottom{Seated scapular-plane dumbbell lateral raise}{2x}
-\BlockSeparator
-\LogRowTwo{Straight-arm dumbbell pullover}{1x}
-\LogRowTwo{Dumbbell leg curl}{1x}
-\LogRowTwoNoBottom{Dumbbell crunch}{1x}
-\hline
-\end{tabular}
-}}
-
-\newcommand{\KathiLog}{%
-{\fontsize{6.9}{7.8}\selectfont
-{\fontsize{20}{24}\selectfont\bfseries Training Log - Kathi}\par
-\vspace{1.35cm}
-\noindent\begin{tabular}{|L{77mm}|*{12}{C{6.9mm}|C{3.1mm}|C{3.1mm}|C{3.1mm}|}}
-\hline
-\LogTableHeader
-\LogRow{Neutral-grip dumbbell sumo deadlift}{2x}
-\LogRow{Semi-pronated dumbbell bench press}{2x}
-\LogRow{Seated dumbbell leg extension}{1x}
-\LogRowNoBottom{Semi-pronated chest-supported dumbbell row}{2x}
-\BlockSeparator
-\LogRowTwo{Seated semi-pronated dumbbell overhead press}{2x}
-\LogRowTwo{Standing dumbbell calf raise (lengthened partials, on step)}{1x}
-\LogRowTwoNoBottom{Seated scapular-plane dumbbell lateral raise}{2x}
-\BlockSeparator
-\LogRowTwo{Dumbbell hip thrust}{1x}
-\LogRowTwo{Straight-arm dumbbell pullover}{1x}
-\LogRowTwo{Dumbbell leg curl}{1x}
-\LogRowTwoNoBottom{Dumbbell crunch}{1x}
-\hline
-\end{tabular}
-}}
-
-\AlexLog
-\clearpage
-\KathiLog
-
-% Return to native portrait A4 for page 4.
-\clearpage
-\setlength{\paperwidth}{210mm}
-\setlength{\paperheight}{297mm}
-\pdfpagewidth=\paperwidth
-\pdfpageheight=\paperheight
-\restoregeometry
-\hsize=\textwidth
-\setlength{\linewidth}{\textwidth}
-\setlength{\columnwidth}{\textwidth}
-
-%=========================================================
-% PAGE 4
-\newgeometry{left=18mm,right=18mm,top=13mm,bottom=15mm}
-\begin{center}
-{\fontsize{22}{26}\selectfont\bfseries Warm-up Loads}\\[0.42cm]
-{\fontsize{8.7}{10.4}\selectfont\color{muted} Block A: 6 / 4 / 2 reps at $\sim$40 / 60 / 80\% of working load}\\[0.12cm]
-{\fontsize{8.3}{10}\selectfont\color{muted} Round each warm-up load up to the next available dumbbell. If this would equal or exceed the working load, use the heaviest available dumbbell below the working load.}
-\end{center}
-
-\vspace{0.10cm}
-\arrayrulecolor{grid}
-\setlength{\arrayrulewidth}{0.55pt}
-\setlength{\tabcolsep}{0pt}
-\begin{center}
-{\fontsize{9.2}{11}\selectfont
-\begin{tabular}{|>{\bfseries}C{4.15cm}|C{4.32cm}|C{4.32cm}|C{4.32cm}|}
-\hline
-\rowcolor{headfill}\rule{0pt}{12.6mm}\raisebox{4.8mm}[0pt][0pt]{Working load} & \textbf{6 reps @ 40\%} & \textbf{4 reps @ 60\%} & \textbf{2 reps @ 80\%} \\
-\hline
-\rule[-5.3mm]{0pt}{12.6mm}2.5 kg & - & - & - \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}5 kg & 2.5 kg & 2.5 kg & 2.5 kg \\
-\rule[-5.3mm]{0pt}{12.6mm}7.5 kg & 5 kg & 5 kg & 5 kg \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}10 kg & 5 kg & 7.5 kg & 7.5 kg \\
-\rule[-5.3mm]{0pt}{12.6mm}12.5 kg & 5 kg & 7.5 kg & 10 kg \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}15 kg & 7.5 kg & 10 kg & 12.5 kg \\
-\rule[-5.3mm]{0pt}{12.6mm}17.5 kg & 7.5 kg & 12.5 kg & 15 kg \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}20 kg & 10 kg & 12.5 kg & 17.5 kg \\
-\rule[-5.3mm]{0pt}{12.6mm}22.5 kg & 10 kg & 15 kg & 20 kg \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}27.5 kg & 12.5 kg & 17.5 kg & 22.5 kg \\
-\rule[-5.3mm]{0pt}{12.6mm}30 kg & 12.5 kg & 20 kg & 27.5 kg \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}32.5 kg & 15 kg & 20 kg & 27.5 kg \\
-\rule[-5.3mm]{0pt}{12.6mm}35 kg & 15 kg & 22.5 kg & 30 kg \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}40 kg & 17.5 kg & 27.5 kg & 32.5 kg \\
-\rule[-5.3mm]{0pt}{12.6mm}45 kg & 20 kg & 27.5 kg & 40 kg \\
-\rowcolor{blockfill}\rule[-5.3mm]{0pt}{12.6mm}50 kg & 20 kg & 30 kg & 40 kg \\
-\hline
-\end{tabular}
-}
-\end{center}
-
-\vspace{0.24cm}
-\begin{center}
-\begin{minipage}{17.1cm}
-{\fontsize{6.55}{7.9}\selectfont\color{muted}
-Loads are per dumbbell. Repeated warm-up loads at low working weights are intentional; 2.5 kg has no lower warm-up load.
+\end{minipage}\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+{\fontsize{8.10}{9.8}\selectfont
+\textbf{Rest:} Only while your partner works; no timed breaks. Do not add rest solely to hit a target; take extra time if safety requires it.\par\vspace{0.45mm}
+\textbf{Progress:} Better control, technique or range (including fuller partials) counts. Off days and isolated stalls are normal; repeat missed targets.\par\vspace{0.45mm}
+\textbf{Recovery:} If at least half of movements stagnate or regress across three consecutive sessions, skip the next scheduled session, then resume.
 }
 \end{minipage}
-\end{center}
+\end{tcolorbox}
+
 
 \end{document}
